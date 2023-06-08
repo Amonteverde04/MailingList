@@ -1,1 +1,1 @@
-# MailingList
+## Mailing List
