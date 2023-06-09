@@ -61,6 +61,12 @@ const reducer = (state, action) => {
               phone: action.phone,
             };
         }
+        case "updateAddress": {
+          return {
+            ...state,
+            address: action.address,
+          };
+      }
         case "incrementNumberOfGuests": {
             return {
               ...state,
@@ -104,6 +110,7 @@ const reducer = (state, action) => {
               lastName: "",
               email: "",
               phone: "",
+              address: "",
               numberOfGuests: 1,
               numberOfRooms: 1,
               sharingWith: "",
@@ -121,6 +128,7 @@ const mailingListDetails = {
   lastName: "",
   email: "",
   phone: "",
+  address: "",
   numberOfGuests: 1,
   numberOfRooms: 1,
   sharingWith: "",
@@ -273,6 +281,21 @@ export default function MailingList() {
                       </InputGroup>
                       <FormHelperText>A phone number we can reach you at, if we need to talk.</FormHelperText>
                       {errors?.phone?.message ? <FormErrorMessage>{errors?.phone?.message}</FormErrorMessage> : null}
+                    </FormControl>
+                </GridItem>
+
+                <GridItem>
+                    <FormControl isRequired isInvalid={errors?.address?.message} isDisabled={loading}>
+                      <FormLabel>Home Address</FormLabel>
+                      <InputGroup>
+                        <Input type='text' 
+                               focusBorderColor={ PRIMARY_COLOR }
+                               {...register("address")} 
+                               value={state.address}
+                               onChange={(e) => dispatch({type: "updateAddress", address: e.target.value,})} />
+                      </InputGroup>
+                      <FormHelperText>An address so we can send an invitation.</FormHelperText>
+                      {errors?.address?.message ? <FormErrorMessage>{errors?.address?.message}</FormErrorMessage> : null}
                     </FormControl>
                 </GridItem>
         
