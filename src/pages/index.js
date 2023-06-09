@@ -28,7 +28,7 @@ export default function Home() {
                  boxSize={["300px", "400px", "500px"]}
                  alt="Picture of Alex and Abbey"/>
           <Text fontSize={"xl"}>
-            We created this site with &#128153; to gauge your interest in traveling with us to celebrate our marriage in October 2025.
+            We created this site with &#128153; to gauge your interest in traveling with us to Jamaica to celebrate our marriage in October 2025.
           </Text> 
           <ScrollButton scrollToQuestionnaire={scrollToQuestionnaire} />
         </div>
