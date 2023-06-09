@@ -197,7 +197,7 @@ export default function MailingList() {
         </AlertDialog>
 
         <Heading as={"h2"} size={"lg"} id="questionnaireHeading">
-          Let us know if you are interested in coming by filling out and submitting the questionnaire below.
+          Let us know if you are interested in coming to Beaches Negril by filling out and submitting the questionnaire below.
           <Text marginTop={"18px"} fontSize={"lg"}>Only one person per group/family needs to fill out this form. If you want to update any info you have submitted, call one of us!</Text>
         </Heading>
   
