@@ -15,6 +15,9 @@ export default function OptionsList() {
                     <Highlight query={"these prices may change"} styles={{ px: '1', py: '.5', bg: '#FAFAFA', color: PRIMARY_COLOR }}>
                         Please keep in mind that these prices may change and the example price is how much it costs for three nights with the specific amount of adults and kids displayed in the card.
                     </Highlight>
+                    <br />
+                    <br />
+                    Beaches Negril has many options for rooms. So do not feel locked to these options.
                 </Text>
             </Heading>
             <SimpleGrid templateColumns={["1fr","1fr 1fr 1fr"]} gap={"36px"} padding={"0 36px"}>
