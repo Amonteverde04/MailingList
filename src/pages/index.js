@@ -3,6 +3,7 @@ import styles from '@/styles/Home.module.css';
 import { Heading, Text, Image  } from '@chakra-ui/react';
 import MailingList from '@/components/mailingList';
 import ScrollButton from '@/components/scrollButton';
+import OptionsList from '@/components/optionsList';
 
 export default function Home() {
   const scrollToQuestionnaire = () => {
@@ -30,6 +31,11 @@ export default function Home() {
             We created this site with &#128153; to gauge your interest in traveling with us to celebrate our marriage in October 2025.
           </Text> 
           <ScrollButton scrollToQuestionnaire={scrollToQuestionnaire} />
+        </div>
+        <div className={styles.mainSectionTwoWrapper}>
+          <OptionsList />
+        </div>
+        <div className={styles.mainSectionThreeWrapper}>
           <MailingList />
         </div>
       </main>

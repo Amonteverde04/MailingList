@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { useReducer, useState, useRef } from "react";
 import { useDisclosure } from "@chakra-ui/react";
 import { mailingListSchema } from "@/lib/validationSchemas/mailingListSchema";
-import { APPURL } from "@/lib/globals";
+import { APPURL, PRIMARY_COLOR, PRIMARY_WHITE } from "@/lib/globals";
 import { PhoneIcon, EmailIcon, CheckCircleIcon, WarningIcon } from '@chakra-ui/icons';
 import {
     FormControl,
@@ -196,9 +196,9 @@ export default function MailingList() {
           </AlertDialogOverlay>
         </AlertDialog>
 
-        <Heading as={"h6"} size={"md"} id="questionnaireHeading">
+        <Heading as={"h2"} size={"lg"} id="questionnaireHeading">
           Let us know if you are interested in coming by filling out and submitting the questionnaire below.
-          <Text marginTop={"9px"} fontSize={"sm"}>Only one person per group/family needs to fill out this form. If you want to update any info you have submitted, call one of us!</Text>
+          <Text marginTop={"18px"} fontSize={"lg"}>Only one person per group/family needs to fill out this form. If you want to update any info you have submitted, call one of us!</Text>
         </Heading>
   
         <form onSubmit={handleSubmit(attemptUpdateMailingList)}>
@@ -207,6 +207,7 @@ export default function MailingList() {
                     <FormControl isRequired isInvalid={errors?.firstName?.message} isDisabled={loading}>
                       <FormLabel>First name</FormLabel>
                       <Input type='text' 
+                             focusBorderColor={ PRIMARY_COLOR }
                              {...register('firstName')}
                              value={state.firstName}
                              onChange={(e) => dispatch({type: "updateFirstName", firstName: e.target.value,})} />
@@ -219,6 +220,7 @@ export default function MailingList() {
                     <FormControl isDisabled={loading}>
                       <FormLabel>Middle name</FormLabel>
                       <Input type='text' 
+                             focusBorderColor={ PRIMARY_COLOR }
                              value={state.middleName}
                              onChange={(e) => dispatch({type: "updateMiddleName", middleName: e.target.value,})} />
                       <FormHelperText>If you know anyone in our family with your name, include your middle initial please.</FormHelperText>
@@ -229,6 +231,7 @@ export default function MailingList() {
                     <FormControl isRequired isInvalid={errors?.lastName?.message} isDisabled={loading}>
                       <FormLabel>Last name</FormLabel>
                       <Input type='text' 
+                             focusBorderColor={ PRIMARY_COLOR }
                              {...register("lastName")} 
                              value={state.lastName}
                              onChange={(e) => dispatch({type: "updateLastName", lastName: e.target.value,})} />
@@ -245,6 +248,7 @@ export default function MailingList() {
                           <EmailIcon color='gray.400' />
                         </InputLeftElement>
                         <Input type='email' 
+                               focusBorderColor={ PRIMARY_COLOR }
                                {...register("email")}
                                value={state.email}
                                onChange={(e) => dispatch({type: "updateEmail", email: e.target.value,})} />
@@ -262,6 +266,7 @@ export default function MailingList() {
                           <PhoneIcon color='gray.400' />
                         </InputLeftElement>
                         <Input type='text' 
+                               focusBorderColor={ PRIMARY_COLOR }
                                {...register("phone")} 
                                value={state.phone}
                                onChange={(e) => dispatch({type: "updatePhone", phone: e.target.value,})} />
@@ -275,13 +280,21 @@ export default function MailingList() {
                     <FormControl isRequired isInvalid={errors?.numberOfGuests?.message} isDisabled={loading}>
                         <FormLabel>Number of guests</FormLabel>
                         <HStack>
-                            <Button isDisabled={loading} onClick={() => dispatch({type: "decrementNumberOfGuests"})}>-</Button>
-                            <Input required
+                            <Button isDisabled={loading} onClick={() => dispatch({type: "decrementNumberOfGuests"})}
+                                    color={ PRIMARY_COLOR } borderColor ={ PRIMARY_COLOR } variant={"outline"}>
+                                -
+                            </Button>
+                            <Input required 
+                                   focusBorderColor={ PRIMARY_COLOR }
+                                   textAlign={"center"}
                                    type="number"
                                    {...register("numberOfGuests")}
                                    value={state.numberOfGuests}
                                    onChange={() => {}} />
-                            <Button isDisabled={loading} onClick={() => dispatch({type: "incrementNumberOfGuests"})}>+</Button>
+                            <Button isDisabled={loading} onClick={() => dispatch({type: "incrementNumberOfGuests"})}
+                                    color={ PRIMARY_COLOR } borderColor ={ PRIMARY_COLOR } variant={"outline"}>
+                              +
+                            </Button>
                         </HStack>
                       <FormHelperText>The estimated amount of people you plan to bring.</FormHelperText>
                       {errors?.numberOfGuests?.message ? <FormErrorMessage>{errors?.numberOfGuests?.message}</FormErrorMessage> : null}
@@ -292,13 +305,21 @@ export default function MailingList() {
                     <FormControl isRequired isInvalid={errors?.numberOfRooms?.message} isDisabled={loading}>
                         <FormLabel>Number of rooms</FormLabel>
                         <HStack>
-                            <Button isDisabled={loading} onClick={() => dispatch({type: "decrementNumberOfRooms"})}>-</Button>
+                            <Button isDisabled={loading} onClick={() => dispatch({type: "decrementNumberOfRooms"})}
+                                    color={ PRIMARY_COLOR } borderColor ={ PRIMARY_COLOR } variant={"outline"}>
+                              -
+                            </Button>
                             <Input required
+                                   focusBorderColor={ PRIMARY_COLOR }
+                                   textAlign={"center"}
                                    type="number"
                                    {...register("numberOfRooms")}
                                    value={state.numberOfRooms}
                                    onChange={() => {}} />
-                            <Button isDisabled={loading} onClick={() => dispatch({type: "incrementNumberOfRooms"})}>+</Button>
+                            <Button isDisabled={loading} onClick={() => dispatch({type: "incrementNumberOfRooms"})}
+                                    color={ PRIMARY_COLOR } borderColor ={ PRIMARY_COLOR } variant={"outline"}>
+                              +
+                            </Button>
                         </HStack>
                         <FormHelperText>The estimated amount of rooms you expect to reserve and pay for.</FormHelperText>
                       {errors?.numberOfRooms?.message ? <FormErrorMessage>{errors?.numberOfRooms?.message}</FormErrorMessage> : null}
@@ -309,9 +330,10 @@ export default function MailingList() {
                   <FormControl isDisabled={loading}>
                       <FormLabel>Who are you sharing a room with?</FormLabel>
                       <Input type='text' 
-                           placeholder='Bob Smith, John Smith, Larry Smith'
-                           value={state.sharingWith}
-                           onChange={(e) => dispatch({type: "updateSharingWith", sharingWith: e.target.value,})} />
+                             focusBorderColor={ PRIMARY_COLOR }
+                             placeholder='Bob Smith, John Smith, Larry Smith'
+                             value={state.sharingWith}
+                             onChange={(e) => dispatch({type: "updateSharingWith", sharingWith: e.target.value,})} />
                       <FormHelperText>
                           Tell us who you plan to share a room with. If you are not sharing a room, leave this blank. 
                       </FormHelperText>
@@ -322,6 +344,7 @@ export default function MailingList() {
                     <FormControl isRequired isInvalid={errors?.decision?.message} isDisabled={loading}>
                         <FormLabel>Are you interested in traveling for our wedding?</FormLabel>
                         <Select placeholder='Select option'
+                                focusBorderColor={ PRIMARY_COLOR }
                                 {...register("decision")}
                                 value={state.decision}
                                 onChange={(e) => dispatch({type: "updateDecision", decision: e.target.value,})} >
@@ -334,7 +357,7 @@ export default function MailingList() {
                 </GridItem>
 
                 <GridItem>
-                    <Button isDisabled={loading} type="submit" style={{minWidth: "188px"}}>
+                    <Button isDisabled={loading} type="submit" style={{minWidth: "188px"}} color={ PRIMARY_COLOR } borderColor ={ PRIMARY_COLOR } variant={"outline"}>
                         {
                             loading ?
                             <Spinner /> : "Submit questionnaire"

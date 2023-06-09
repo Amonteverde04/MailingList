@@ -1,17 +1,35 @@
 .mainWrapper {
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
     background-color: #FAFAFA;
+    color: #181818;
+    gap: 36px;
+    padding: 36px 36px;
+}
+
+.mainSectionTwoWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-color: #2e4082;
+    color: #FAFAFA;
     gap: 36px;
     padding: 36px;
 }
 
-.faqButton {
-    position: absolute !important;
-    top: 36px;
-    right: 36px;
+.mainSectionThreeWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-color: #FAFAFA;
+    color: #181818;
+    gap: 36px;
+    padding: 36px;
 }
