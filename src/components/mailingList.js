@@ -66,7 +66,25 @@ const reducer = (state, action) => {
             ...state,
             address: action.address,
           };
-      }
+        }
+        case "updateZip": {
+          return {
+            ...state,
+            zip: action.zip,
+          };
+        }
+        case "updateAddressState": {
+          return {
+            ...state,
+            addressState: action.addressState,
+          };
+        }
+        case "updateCity": {
+          return {
+            ...state,
+            city: action.city,
+          };
+        }
         case "incrementNumberOfGuests": {
             return {
               ...state,
@@ -111,6 +129,9 @@ const reducer = (state, action) => {
               email: "",
               phone: "",
               address: "",
+              zip: "",
+              addressState: "",
+              city: "",
               numberOfGuests: 1,
               numberOfRooms: 1,
               sharingWith: "",
@@ -129,6 +150,9 @@ const mailingListDetails = {
   email: "",
   phone: "",
   address: "",
+  zip: "",
+  addressState: "",
+  city: "",
   numberOfGuests: 1,
   numberOfRooms: 1,
   sharingWith: "",
@@ -298,6 +322,48 @@ export default function MailingList() {
                       {errors?.address?.message ? <FormErrorMessage>{errors?.address?.message}</FormErrorMessage> : null}
                     </FormControl>
                 </GridItem>
+
+                <GridItem>
+                    <FormControl isRequired isInvalid={errors?.zip?.message} isDisabled={loading}>
+                      <FormLabel>Zip Code</FormLabel>
+                      <InputGroup>
+                        <Input type='text' 
+                               focusBorderColor={ PRIMARY_COLOR }
+                               {...register("zip")} 
+                               value={state.zip}
+                               onChange={(e) => dispatch({type: "updateZip", zip: e.target.value,})} />
+                      </InputGroup>
+                      {errors?.zip?.message ? <FormErrorMessage>{errors?.zip?.message}</FormErrorMessage> : null}
+                    </FormControl>
+                </GridItem>
+
+                <GridItem>
+                    <FormControl isRequired isInvalid={errors?.addressState?.message} isDisabled={loading}>
+                      <FormLabel>State</FormLabel>
+                      <InputGroup>
+                        <Input type='text' 
+                               focusBorderColor={ PRIMARY_COLOR }
+                               {...register("addressState")} 
+                               value={state.addressState}
+                               onChange={(e) => dispatch({type: "updateAddressState", addressState: e.target.value,})} />
+                      </InputGroup>
+                      {errors?.addressState?.message ? <FormErrorMessage>{errors?.addressState?.message}</FormErrorMessage> : null}
+                    </FormControl>
+                </GridItem>
+
+                <GridItem>
+                    <FormControl isRequired isInvalid={errors?.city?.message} isDisabled={loading}>
+                      <FormLabel>City</FormLabel>
+                      <InputGroup>
+                        <Input type='text' 
+                               focusBorderColor={ PRIMARY_COLOR }
+                               {...register("city")} 
+                               value={state.city}
+                               onChange={(e) => dispatch({type: "updateCity", city: e.target.value,})} />
+                      </InputGroup>
+                      {errors?.city?.message ? <FormErrorMessage>{errors?.city?.message}</FormErrorMessage> : null}
+                    </FormControl>
+                </GridItem>
         
                 <GridItem>
                     <FormControl isRequired isInvalid={errors?.numberOfGuests?.message} isDisabled={loading}>
@@ -389,7 +455,7 @@ export default function MailingList() {
                 </GridItem>
 
                 <GridItem>
-                  <Text><b>*Please note that this is not our official invitation. We are looking to see who is interested in coming.*</b></Text>
+                  <Text><b>*Please note that this is not our official invitation. We are looking to see who is interested in coming and there is no need to book anything at this time.</b></Text>
                 </GridItem>
             </Grid>
         </form>
