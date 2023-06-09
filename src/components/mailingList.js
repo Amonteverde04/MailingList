@@ -1,4 +1,10 @@
-import { PhoneIcon, EmailIcon } from '@chakra-ui/icons';
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import { useReducer, useState, useRef } from "react";
+import { useDisclosure } from "@chakra-ui/react";
+import { mailingListSchema } from "@/lib/validationSchemas/mailingListSchema";
+import { APPURL } from "@/lib/globals";
+import { PhoneIcon, EmailIcon, CheckCircleIcon, WarningIcon } from '@chakra-ui/icons';
 import {
     FormControl,
     FormLabel,
@@ -7,132 +13,336 @@ import {
     Input,
     InputGroup,
     InputLeftElement,
-    NumberInput,
-    NumberInputField,
-    NumberInputStepper,
-    NumberIncrementStepper,
-    NumberDecrementStepper,
     Grid,
     GridItem,
-    Stack,
-    Radio, 
-    RadioGroup,
+    Select,
     Heading,
-    Text
+    Text,
+    Button,
+    HStack,
+    Spinner,
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogContent,
+    AlertDialogOverlay,
 } from '@chakra-ui/react';
-  
-  export default function MailingList() {
+
+const reducer = (state, action) => {
+    switch (action.type) {
+        case "updateFirstName": {
+            return {
+              ...state,
+              firstName: action.firstName,
+            };
+        }
+        case "updateMiddleName": {
+            return {
+              ...state,
+              middleName: action.middleName,
+            };
+        }
+        case "updateLastName": {
+            return {
+              ...state,
+              lastName: action.lastName,
+            };
+        }
+        case "updateEmail": {
+            return {
+              ...state,
+              email: action.email,
+            };
+        }
+        case "updatePhone": {
+            return {
+              ...state,
+              phone: action.phone,
+            };
+        }
+        case "incrementNumberOfGuests": {
+            return {
+              ...state,
+              numberOfGuests: state.numberOfGuests >= 7 ? 7 : state.numberOfGuests + 1,
+            };
+        }
+        case "decrementNumberOfGuests": {
+            return {
+              ...state,
+              numberOfGuests: state.numberOfGuests <= 1 ? 1 : state.numberOfGuests - 1,
+            };
+        }
+        case "incrementNumberOfRooms": {
+            return {
+              ...state,
+              numberOfRooms: state.numberOfRooms >= 5 ? 5 : state.numberOfRooms + 1,
+            };
+        }
+        case "decrementNumberOfRooms": {
+            return {
+              ...state,
+              numberOfRooms: state.numberOfRooms <= 1 ? 1 : state.numberOfRooms - 1,
+            };
+        }
+        case "updateSharingWith": {
+          return {
+            ...state,
+            sharingWith: action.sharingWith,
+          };
+        }
+        case "updateDecision": {
+            return {
+              ...state,
+              decision: action.decision,
+            };
+        }
+        case "clearState": {
+          return {
+              firstName: "",
+              middleName: "",
+              lastName: "",
+              email: "",
+              phone: "",
+              numberOfGuests: 1,
+              numberOfRooms: 1,
+              sharingWith: "",
+              decision: "",
+          };
+        }
+        default:
+          throw Error("Unknown action: " + action.type);
+    }
+};
+
+const mailingListDetails = {
+  firstName: "",
+  middleName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  numberOfGuests: 1,
+  numberOfRooms: 1,
+  sharingWith: "",
+  decision: "",
+};
+
+export default function MailingList() {
+    const [state, dispatch] = useReducer(reducer, mailingListDetails);
+    const [loading, setLoading] = useState(false);
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const cancelRef = useRef();
+    const [submissionResponseStatus, setsubmissionResponseStatus] = useState(false);
+    const [submissionResponseMessage, setsubmissionResponseMessage] = useState("");
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        resolver: yupResolver(mailingListSchema),
+    });
+
+    const attemptUpdateMailingList = async () => {
+        setLoading(true);
+
+        const request = await fetch(`${APPURL}/api/mailingListEndpoint`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(state),
+        });
+
+        const response = await request.json();
+
+        setsubmissionResponseMessage(response.message);
+        setsubmissionResponseStatus(response.success);
+
+        if(response.success !== true) 
+        {
+            setLoading(false);
+            onOpen();
+            return;
+        }
+
+        onOpen();
+        dispatch({type: "clearState"});
+        setLoading(false);
+    }
+
     return (
       <>
-        <Heading as={"h6"} size={"md"}>
-          Let us know if you are coming by filling out and submitting the form below.
+        <AlertDialog
+          isOpen={isOpen}
+          leastDestructiveRef={cancelRef}
+          onClose={onClose}
+          isCentered
+          motionPreset='slideInBottom'>
+            <AlertDialogOverlay>
+                <AlertDialogContent background={submissionResponseStatus ? "#38a169" : "#e53e3e"} color={"#FAFAFA"}>
+                    <AlertDialogHeader fontSize='lg' fontWeight='bold' display={"flex"} alignItems={"center"} justifyContent={"left"} gap={"18px"}>
+                        {submissionResponseStatus ? <CheckCircleIcon /> : <WarningIcon />}
+                        {submissionResponseStatus ? "Success!" : "Error"}
+                    </AlertDialogHeader>
+                    <AlertDialogBody>
+                        { submissionResponseMessage }
+                    </AlertDialogBody>
+                    <AlertDialogFooter>
+                        <Button ref={cancelRef} onClick={onClose} color={submissionResponseStatus ? "#38a169" : "#e53e3e"}>
+                            Close
+                        </Button>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
+
+        <Heading as={"h6"} size={"md"} id="questionnaireHeading">
+          Let us know if you are interested in coming by filling out and submitting the questionnaire below.
           <Text marginTop={"9px"} fontSize={"sm"}>Only one person per group/family needs to fill out this form. If you want to update any info you have submitted, call one of us!</Text>
         </Heading>
   
-        <Grid gap={"36px"}>
-  
-          <GridItem>
-            <FormControl>
-              <FormLabel>First name</FormLabel>
-              <Input type='text' />
-              <FormHelperText>Who is filling out the form?</FormHelperText>
-            </FormControl>
-          </GridItem>
-  
-          <GridItem>
-            <FormControl>
-              <FormLabel>Middle name</FormLabel>
-              <Input type='text' />
-              <FormHelperText>If you know anyone in our family with your name, include your middle initial please.</FormHelperText>
-            </FormControl>
-          </GridItem>
-  
-          <GridItem>
-            <FormControl>
-              <FormLabel>Last name</FormLabel>
-              <Input type='text' />
-              <FormHelperText>Which *name* is filling out the form?</FormHelperText>
-            </FormControl>
-          </GridItem>
-  
-          <GridItem>
-            <FormControl>
-              <FormLabel>Email address</FormLabel>
-              <InputGroup>
-                <InputLeftElement pointerEvents='none'>
-                  <EmailIcon color='gray.400' />
-                </InputLeftElement>
-                <Input type='email' />
-              </InputGroup>
-              <FormHelperText>Well never share your email, but we may need it later for updates.</FormHelperText>
-            </FormControl>
-          </GridItem>
-  
-          <GridItem>
-            <FormControl>
-              <FormLabel>Phone number</FormLabel>
-              <InputGroup>
-                <InputLeftElement pointerEvents='none'>
-                  <PhoneIcon color='gray.400' />
-                </InputLeftElement>
-                <Input type='text' />
-              </InputGroup>
-              <FormHelperText>A phone number we can reach you at, if we need to talk.</FormHelperText>
-            </FormControl>
-          </GridItem>
-  
-          <GridItem>
-            <FormControl>
-              <FormLabel>Number of guests</FormLabel>
-              <NumberInput isRequired min={1} max={7} clampValueOnBlur>
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-              <FormHelperText>The estimated amount of people you plan to bring.</FormHelperText>
-            </FormControl>
-          </GridItem>
-  
-          <GridItem>
-            <FormControl>
-              <FormLabel>Number of rooms</FormLabel>
-              <NumberInput isRequired min={0} max={5} clampValueOnBlur>
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-              <FormHelperText>The estimated amount of rooms you expect to reserve and pay for.</FormHelperText>
-            </FormControl>
-          </GridItem>
-  
-          <GridItem>
-            <FormControl>
-              <FormLabel>Who are you sharing a room with?</FormLabel>
-              <Input type='text' placeholder='Bob Smith, John Smith, Larry Smith' />
-              <FormHelperText>
-                Tell us who you plan to share a room with. If you are not sharing a room, leave this blank. 
-              </FormHelperText>
-            </FormControl>
-          </GridItem>
-  
-          <GridItem>
-            <FormControl>
-              <FormLabel>Do you plan on traveling with us?</FormLabel>
-              <RadioGroup>
-                <Stack direction='column' gap={"18px"}>
-                  <Radio value='1'>Definitely coming.</Radio>
-                  <Radio value='2'>Need to think about it.</Radio>
-                  <Radio value='3'>Probably not.</Radio>
-                </Stack>
-              </RadioGroup>
-            </FormControl>
-          </GridItem>
-  
-        </Grid>
+        <form onSubmit={handleSubmit(attemptUpdateMailingList)}>
+            <Grid gap={"36px"}>
+                <GridItem>
+                    <FormControl isRequired isInvalid={errors?.firstName?.message} isDisabled={loading}>
+                      <FormLabel>First name</FormLabel>
+                      <Input type='text' 
+                             {...register('firstName')}
+                             value={state.firstName}
+                             onChange={(e) => dispatch({type: "updateFirstName", firstName: e.target.value,})} />
+                      <FormHelperText>Who is filling out the form?</FormHelperText>
+                      {errors?.firstName?.message ? <FormErrorMessage>{errors?.firstName?.message}</FormErrorMessage> : null}
+                    </FormControl>
+                </GridItem>
+
+                <GridItem>
+                    <FormControl isDisabled={loading}>
+                      <FormLabel>Middle name</FormLabel>
+                      <Input type='text' 
+                             value={state.middleName}
+                             onChange={(e) => dispatch({type: "updateMiddleName", middleName: e.target.value,})} />
+                      <FormHelperText>If you know anyone in our family with your name, include your middle initial please.</FormHelperText>
+                    </FormControl>
+                </GridItem>
+
+                <GridItem>
+                    <FormControl isRequired isInvalid={errors?.lastName?.message} isDisabled={loading}>
+                      <FormLabel>Last name</FormLabel>
+                      <Input type='text' 
+                             {...register("lastName")} 
+                             value={state.lastName}
+                             onChange={(e) => dispatch({type: "updateLastName", lastName: e.target.value,})} />
+                      <FormHelperText>Which *name* is filling out the form?</FormHelperText>
+                      {errors?.lastName?.message ? <FormErrorMessage>{errors?.lastName?.message}</FormErrorMessage> : null}
+                    </FormControl>
+                </GridItem>
+        
+                <GridItem>
+                    <FormControl isRequired isInvalid={errors?.email?.message} isDisabled={loading}>
+                      <FormLabel>Email address</FormLabel>
+                      <InputGroup>
+                        <InputLeftElement pointerEvents='none'>
+                          <EmailIcon color='gray.400' />
+                        </InputLeftElement>
+                        <Input type='email' 
+                               {...register("email")}
+                               value={state.email}
+                               onChange={(e) => dispatch({type: "updateEmail", email: e.target.value,})} />
+                      </InputGroup>
+                      <FormHelperText>Well never share your email, but we may need it later for updates.</FormHelperText>
+                      {errors?.email?.message ? <FormErrorMessage>{errors?.email?.message}</FormErrorMessage> : null}
+                    </FormControl>
+                </GridItem>
+        
+                <GridItem>
+                    <FormControl isRequired isInvalid={errors?.phone?.message} isDisabled={loading}>
+                      <FormLabel>Phone number</FormLabel>
+                      <InputGroup>
+                        <InputLeftElement pointerEvents='none'>
+                          <PhoneIcon color='gray.400' />
+                        </InputLeftElement>
+                        <Input type='text' 
+                               {...register("phone")} 
+                               value={state.phone}
+                               onChange={(e) => dispatch({type: "updatePhone", phone: e.target.value,})} />
+                      </InputGroup>
+                      <FormHelperText>A phone number we can reach you at, if we need to talk.</FormHelperText>
+                      {errors?.phone?.message ? <FormErrorMessage>{errors?.phone?.message}</FormErrorMessage> : null}
+                    </FormControl>
+                </GridItem>
+        
+                <GridItem>
+                    <FormControl isRequired isInvalid={errors?.numberOfGuests?.message} isDisabled={loading}>
+                        <FormLabel>Number of guests</FormLabel>
+                        <HStack>
+                            <Button isDisabled={loading} onClick={() => dispatch({type: "decrementNumberOfGuests"})}>-</Button>
+                            <Input required
+                                   type="number"
+                                   {...register("numberOfGuests")}
+                                   value={state.numberOfGuests}
+                                   onChange={() => {}} />
+                            <Button isDisabled={loading} onClick={() => dispatch({type: "incrementNumberOfGuests"})}>+</Button>
+                        </HStack>
+                      <FormHelperText>The estimated amount of people you plan to bring.</FormHelperText>
+                      {errors?.numberOfGuests?.message ? <FormErrorMessage>{errors?.numberOfGuests?.message}</FormErrorMessage> : null}
+                    </FormControl>
+                </GridItem>
+        
+                <GridItem>
+                    <FormControl isRequired isInvalid={errors?.numberOfRooms?.message} isDisabled={loading}>
+                        <FormLabel>Number of rooms</FormLabel>
+                        <HStack>
+                            <Button isDisabled={loading} onClick={() => dispatch({type: "decrementNumberOfRooms"})}>-</Button>
+                            <Input required
+                                   type="number"
+                                   {...register("numberOfRooms")}
+                                   value={state.numberOfRooms}
+                                   onChange={() => {}} />
+                            <Button isDisabled={loading} onClick={() => dispatch({type: "incrementNumberOfRooms"})}>+</Button>
+                        </HStack>
+                        <FormHelperText>The estimated amount of rooms you expect to reserve and pay for.</FormHelperText>
+                      {errors?.numberOfRooms?.message ? <FormErrorMessage>{errors?.numberOfRooms?.message}</FormErrorMessage> : null}
+                    </FormControl>
+                </GridItem>
+        
+                <GridItem>
+                  <FormControl isDisabled={loading}>
+                      <FormLabel>Who are you sharing a room with?</FormLabel>
+                      <Input type='text' 
+                           placeholder='Bob Smith, John Smith, Larry Smith'
+                           value={state.sharingWith}
+                           onChange={(e) => dispatch({type: "updateSharingWith", sharingWith: e.target.value,})} />
+                      <FormHelperText>
+                          Tell us who you plan to share a room with. If you are not sharing a room, leave this blank. 
+                      </FormHelperText>
+                  </FormControl>
+                </GridItem>
+        
+                <GridItem>
+                    <FormControl isRequired isInvalid={errors?.decision?.message} isDisabled={loading}>
+                        <FormLabel>Are you interested in traveling for our wedding?</FormLabel>
+                        <Select placeholder='Select option'
+                                {...register("decision")}
+                                value={state.decision}
+                                onChange={(e) => dispatch({type: "updateDecision", decision: e.target.value,})} >
+                          <option value='Yes, I can&apos;t wait!'>Yes, I can&apos;t wait!</option>
+                          <option value='I need to think about it.'>I need to think about it.</option>
+                          <option value='I don&apos;t think I can make it.'>I don&apos;t think I can make it.</option>
+                        </Select>
+                        {errors?.decision?.message ? <FormErrorMessage>{errors?.decision?.message}</FormErrorMessage> : null}
+                    </FormControl>
+                </GridItem>
+
+                <GridItem>
+                    <Button isDisabled={loading} type="submit" style={{minWidth: "188px"}}>
+                        {
+                            loading ?
+                            <Spinner /> : "Submit questionnaire"
+                        }
+                    </Button>
+                </GridItem>
+            </Grid>
+        </form>
       </>
     );
-  }
+}
