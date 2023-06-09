@@ -364,6 +364,10 @@ export default function MailingList() {
                         }
                     </Button>
                 </GridItem>
+
+                <GridItem>
+                  <Text><b>*Please note that this is not our official invitation. We are looking to see who is interested in coming.*</b></Text>
+                </GridItem>
             </Grid>
         </form>
       </>
