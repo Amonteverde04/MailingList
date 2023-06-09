@@ -18,11 +18,11 @@ export default function RoomOptions(props) {
                           gap={"36px"}
                           borderRadius={"9px"}
                           background={ PRIMARY_WHITE }>
-                    <Image src={props.image}
-                           borderRadius={"9px"}
-                           alt="Picture of Room" />
                     <Stack direction={"column"} 
                            textAlign={"left"}>
+                        <Image src={props.image}
+                               borderRadius={"9px"}
+                               alt="Picture of Room" />
                         <Heading as={"h6"} 
                                  size={"md"}>
                             {props.roomName}
