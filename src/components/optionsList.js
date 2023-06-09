@@ -13,7 +13,7 @@ export default function OptionsList() {
                 <Text marginTop={"18px"} 
                       fontSize={"lg"}>
                     <Highlight query={"these prices may change"} styles={{ px: '1', py: '.5', bg: '#FAFAFA', color: PRIMARY_COLOR }}>
-                        Please keep in mind that these prices may change and the example price is how much it costs for the specific amount of adults and kids displayed in the card.
+                        Please keep in mind that these prices may change and the example price is how much it costs for three nights with the specific amount of adults and kids displayed in the card.
                     </Highlight>
                 </Text>
             </Heading>
