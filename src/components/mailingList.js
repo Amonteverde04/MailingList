@@ -267,7 +267,7 @@ export default function MailingList() {
                              {...register("lastName")} 
                              value={state.lastName}
                              onChange={(e) => dispatch({type: "updateLastName", lastName: e.target.value,})} />
-                      <FormHelperText>Which *name* is filling out the form?</FormHelperText>
+                      <FormHelperText>Which {state.firstName === "" ? "person" : state.firstName } is filling out the form?</FormHelperText>
                       {errors?.lastName?.message ? <FormErrorMessage>{errors?.lastName?.message}</FormErrorMessage> : null}
                     </FormControl>
                 </GridItem>
